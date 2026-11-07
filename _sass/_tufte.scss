@@ -455,22 +455,37 @@ p.subtitle {
   margin-top: 0.5rem;
 }
 
-/* About page: profile block sits in the right margin like a margin figure. */
-.profile {
-  width: 28%;
-  margin-left: 2.5%;
-  margin-bottom: 1.5rem;
+/* About page: the photo is a Tufte margin figure. Same column and width as a
+ * sidenote (60.5%–88% of the article), its top aligned with the first line of
+ * the bio, with the address set beneath it like a caption. */
+.post article > .profile {
+  float: right !important;
+  clear: right;
+  width: 27.5%;
+  margin: 0.45rem 12% 1.5rem 0;
+
+  figure {
+    margin: 0;
+  }
+
+  img {
+    width: 100%;
+    max-width: 11rem;
+    height: auto;
+    box-shadow: none !important;
+  }
 
   .more-info {
     font-family: $serif;
     font-size: 1.05rem;
-    line-height: 1.45;
+    line-height: 1.4;
     color: $ink-light;
-    margin-top: 0.5rem;
+    margin-top: 0.6rem;
 
     p {
       display: block;
       margin: 0;
+      color: $ink-light;
     }
   }
 }
@@ -1250,10 +1265,11 @@ $text-left: calc(50% - #{$article-width} * 0.275);
     font-size: 2.4rem;
   }
 
-  .profile {
+  .post article > .profile {
     float: none !important;
     width: 100%;
-    margin-left: 0;
+    max-width: 14rem;
+    margin: 0 0 1.5rem 0;
   }
 
   .projects .card {
