@@ -534,19 +534,19 @@ p.subtitle {
   background-color: $ink;
 }
 
-footer,
-footer.fixed-bottom,
-footer.sticky-bottom {
-  background-color: $paper !important;
-  color: $ink-light;
-  border-top: 1px solid $rule;
-  font-size: 0.95rem;
-  line-height: 1.5;
+// No site footer. The gem hard-codes a copyright line into it, so it is hidden
+// here rather than overriding the template. Delete this rule to bring it back.
+body > footer[role="contentinfo"] {
+  display: none !important;
+}
 
-  .container,
-  a {
-    color: $ink-light !important;
-  }
+// Without the fixed footer, the page needs no reserved space at the bottom.
+body {
+  padding-bottom: 0;
+}
+
+.post {
+  padding-bottom: 4rem;
 }
 
 #back-to-top {
@@ -1022,10 +1022,25 @@ $contents-breakpoint: 1000px !default; // below this, the regular navbar is used
 $contents-top: 7rem; // aligns roughly with the page title
 $contents-width: 11rem;
 $contents-gap: 2.5rem; // space between the contents and the text column
-// Left edge of the text column, matching the container geometry above.
-$text-left: calc((100% - min(87.5%, 1400px)) / 2 + 12.5%);
+// Centered geometry. The article box (text column + sidenote margin) is sized
+// so the 55% text column sits in the middle of the window while the margin to
+// its right still fits: center + 0.725 × article ≤ window − 1.5rem.
+$article-width: min(1225px, calc((100% - 3rem) / 1.45));
+// Left edge of the (centered) text column.
+$text-left: calc(50% - #{$article-width} * 0.275);
 
 @media (min-width: $contents-breakpoint) {
+  body > .container[role="main"],
+  #navbar > .container {
+    box-sizing: content-box;
+    width: $article-width;
+    max-width: none;
+    margin-left: $text-left;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
   #navbar .navbar-nav {
     position: fixed;
     top: $contents-top;
@@ -1098,6 +1113,83 @@ $text-left: calc((100% - min(87.5%, 1400px)) / 2 + 12.5%);
   // Title page (home has no brand link): no running head, just the contents.
   #navbar:not(:has(.navbar-brand)) {
     border-bottom-color: transparent;
+  }
+
+  // Pages with a section sidebar (e.g. the CV): drop the sidebar column so the
+  // text centers like every other page, and hang the section list in the margin
+  // contents as sub-entries of the current section.
+  body > .container[role="main"] > .row:has(#toc-sidebar) {
+    display: block;
+    margin: 0;
+
+    > [class*="col-"] {
+      width: 100%;
+      max-width: 100%;
+      flex: none;
+      padding: 0;
+    }
+
+    > [class*="col-"]:has(> #toc-sidebar) {
+      width: 0;
+      height: 0;
+    }
+  }
+
+  // Sits under the five contents entries (each 1.8rem tall), indented to the
+  // label column; shifts down if there are more sections.
+  body {
+    --contents-rows: 5;
+  }
+
+  @for $n from 6 through 8 {
+    body:has(#navbar .navbar-nav > .nav-item:nth-child(#{$n})) {
+      --contents-rows: #{$n};
+    }
+  }
+
+  #toc-sidebar {
+    position: fixed !important;
+    top: calc(#{$contents-top} + var(--contents-rows) * 1.8rem + 0.5rem) !important;
+    left: calc(max(1rem, calc(#{$text-left} - #{$contents-width} - #{$contents-gap})) + 2rem);
+    width: calc(#{$contents-width} - 2rem);
+    max-height: calc(100vh - #{$contents-top} - var(--contents-rows) * 1.8rem - 5rem);
+    overflow-y: auto;
+    border: 0;
+
+    &.toc > .toc-list,
+    .toc-list {
+      padding-left: 0;
+      border: 0;
+    }
+
+    .toc-list .toc-list {
+      padding-left: 0.75rem;
+    }
+
+    .toc-link,
+    .toc-link.is-active-link {
+      font-family: $serif;
+      font-size: 0.9rem;
+      font-weight: 400;
+      line-height: 1.35;
+      padding: 0.1rem 0;
+      color: $ink-light;
+      text-decoration: none;
+
+      &::before {
+        display: none;
+      }
+
+      &:hover {
+        color: $ink;
+        text-decoration: underline;
+      }
+    }
+
+    .toc-link.is-active-link {
+      color: $ink;
+      font-style: italic;
+    }
   }
 }
 
