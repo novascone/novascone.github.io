@@ -10,8 +10,6 @@
  * on it), so Tufte's 15px-root values are converted rather than copied.
  ******************************************************************************/
 
-@use "sass:color";
-
 // Paper color. Set `tufte.paper` in _config.yml: "#fffff8" (default) or "#ffffff".
 $paper: #fffff8 !default;
 $ink: #111111 !default;
@@ -1011,138 +1009,95 @@ label.margin-toggle:not(.sidenote-number) {
 }
 
 /* -----------------------------------------------------------------------------
- * Book tabs (wide screens only)
+ * Contents and running head (wide screens only)
  *
- * The nav becomes a set of thumb-index tabs growing out of a hairline "fore-edge"
- * down the right side of the window, like stepped page edges in a book: each
- * later section's tab is lower and reaches a little further right. The open
- * page's tab is paper-colored and breaks the edge line, so it reads as part of
- * the page. Sections before the current one sit mirrored on the left edge, as
- * turned pages. Pure CSS on the gem's existing nav markup; no layout override.
+ * The nav becomes a book-style table of contents fixed in the empty left
+ * margin: roman numerals, small caps, the current section marked with a short
+ * rule. The header bar becomes a running head (your name, small caps, hairline).
+ * The home page is the title page, so it gets no running head, as in a book.
+ * Pure CSS on the gem's existing nav markup; no layout override.
  * -------------------------------------------------------------------------- */
 
-$tabs-breakpoint: 1000px !default; // below this, the regular navbar is used
-$tab-width: 2rem; // shortest tab (the first section)
-$tab-step: 0.6rem; // how much further each later tab reaches
-$tab-edge: 6.25rem; // distance of the fore-edge line from the window edge
-$tab-top: 5.5rem; // first tab sits just under the header
-$tab-tint: color.mix($ink, $paper, 4%); // pages beneath the open one
+$contents-breakpoint: 1000px !default; // below this, the regular navbar is used
+$contents-top: 7rem; // aligns roughly with the page title
+$contents-width: 11rem;
+$contents-gap: 2.5rem; // space between the contents and the text column
+// Left edge of the text column, matching the container geometry above.
+$text-left: calc((100% - min(87.5%, 1400px)) / 2 + 12.5%);
 
-@media (min-width: $tabs-breakpoint) {
-  // Keep page content clear of the tab strip on both sides.
-  body > .container[role="main"],
-  footer > .container {
-    padding-right: calc(#{$tab-edge} + 1.5rem);
-  }
-
-  // Tabs share the window height: one share per section (5 by default, up to 8).
+@media (min-width: $contents-breakpoint) {
   #navbar .navbar-nav {
-    --tab-n: 5;
-    --tab-h: min(7.5rem, calc((100vh - #{$tab-top} - 4rem) / var(--tab-n)));
-  }
-
-  @for $n from 6 through 8 {
-    #navbar .navbar-nav:has(> .nav-item:nth-child(#{$n})) {
-      --tab-n: #{$n};
-    }
-  }
-
-  #navbar .navbar-nav {
-    // Right fore-edge: the edge of the unturned pages.
-    &::before {
-      content: "";
-      position: fixed;
-      top: $tab-top;
-      bottom: 3.5rem;
-      left: calc(100% - #{$tab-edge});
-      border-left: 1px solid $rule;
-      pointer-events: none;
-    }
-
-    // Left fore-edge, only once some pages have been turned.
-    &:has(> .nav-item:first-child ~ .nav-item.active)::after {
-      content: "";
-      position: fixed;
-      top: $tab-top;
-      bottom: 3.5rem;
-      right: calc(100% - #{$tab-edge});
-      border-right: 1px solid $rule;
-      pointer-events: none;
-    }
-  }
-
-  @for $i from 1 through 8 {
-    #navbar .navbar-nav > .nav-item:nth-child(#{$i}) {
-      --i: #{$i - 1};
-    }
+    position: fixed;
+    top: $contents-top;
+    left: max(1rem, calc(#{$text-left} - #{$contents-width} - #{$contents-gap}));
+    width: min(#{$contents-width}, calc(#{$text-left} - #{$contents-gap} - 1rem));
+    display: block;
+    margin: 0;
+    padding: 0;
+    counter-reset: contents;
+    list-style: none;
   }
 
   #navbar .navbar-nav > .nav-item {
-    position: fixed;
+    counter-increment: contents;
+    display: block;
     margin: 0;
     padding: 0;
-    top: calc(#{$tab-top} + var(--i) * var(--tab-h));
-    height: var(--tab-h);
-    // Unturned pages hang off the right edge, attached to the fore-edge line.
-    left: calc(100% - #{$tab-edge});
-    width: calc(#{$tab-width} + var(--i) * #{$tab-step});
 
     > .nav-link {
-      writing-mode: vertical-rl;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-      padding: 0 !important;
-      margin: 0;
+      display: grid;
+      grid-template-columns: 2rem auto 1fr;
+      align-items: baseline;
+      padding: 0.2rem 0 !important;
       font-size: 1rem;
-      letter-spacing: 0.08em;
-      line-height: 1;
+      line-height: 1.4;
+      letter-spacing: 0.05em;
       color: $ink-light !important;
-      background: $tab-tint !important;
-      border: 1px solid $rule;
-      border-left: 0;
       text-decoration: none !important;
       white-space: nowrap;
-      overflow: hidden;
+      text-align: left;
+      justify-items: start;
+
+      &::before {
+        content: counter(contents, lower-roman);
+        font-family: et-book-roman-old-style, $serif;
+        font-variant: normal;
+        text-transform: none;
+        letter-spacing: 0;
+        font-style: italic;
+        justify-self: start;
+        text-align: left;
+      }
     }
 
     > .nav-link:hover {
       color: $ink !important;
+      text-decoration: underline !important;
     }
   }
 
-  // The open page: paper-colored, ink label, and it covers the edge line so the
-  // tab and the page read as one sheet.
-  #navbar .navbar-nav > .nav-item.active {
-    left: calc(100% - #{$tab-edge} - 1px);
-    width: calc(#{$tab-width} + var(--i) * #{$tab-step} + 1px);
-    z-index: 1;
+  // Current section: full ink and a short rule after the label.
+  #navbar .navbar-nav > .nav-item.active > .nav-link {
+    color: $ink !important;
+    text-decoration: none !important;
 
-    > .nav-link {
-      color: $ink !important;
-      background: $paper !important;
-      border-color: $ink;
-      border-left: 0;
-      text-decoration: none !important;
+    &::after {
+      content: "";
+      align-self: center;
+      width: 1.25rem;
+      margin-left: 0.5rem;
+      border-top: 1px solid $ink;
     }
   }
 
-  // Turned pages: everything before the open one, mirrored onto the left edge.
-  #navbar .navbar-nav > .nav-item:has(~ .nav-item.active) {
-    left: auto;
-    right: calc(100% - #{$tab-edge});
-
-    > .nav-link {
-      border: 1px solid $rule;
-      border-right: 0;
-    }
-  }
-
-  // The horizontal list is now empty space in the header; keep the brand only.
+  // Running head: brand only, in small caps over a hairline.
   #navbar .navbar-collapse-main {
     flex-grow: 0;
+  }
+
+  // Title page (home has no brand link): no running head, just the contents.
+  #navbar:not(:has(.navbar-brand)) {
+    border-bottom-color: transparent;
   }
 }
 
