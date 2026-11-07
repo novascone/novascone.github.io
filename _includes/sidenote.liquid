@@ -1,0 +1,25 @@
+{%- comment -%}
+  Tufte-style numbered sidenote. Use inline, inside a paragraph:
+
+    Some sentence.{% include sidenote.liquid text="The note, with *Markdown* and [links](https://example.com)." %} More text.
+
+  Parameters:
+    text  (required) note body; Markdown is rendered inline.
+    id    (optional) unique id for the mobile toggle; auto-numbered per page if omitted.
+
+  Numbering is automatic (CSS counter). On narrow screens the note collapses and
+  the superscript number becomes a tap target that reveals it inline.
+  Output is kept on one line so it never breaks the surrounding paragraph.
+{%- endcomment -%}
+{%- assign tufte_note_count = tufte_note_count | plus: 1 -%}
+{%- capture tufte_note_id -%}{{ include.id | default: 'sn' }}-{{ tufte_note_count }}{%- endcapture -%}
+{%- assign tufte_note_body = include.text
+  | markdownify
+  | strip
+  | remove_first: '<p>'
+  | replace: '</p>', ''
+  | replace: '<p>', '<br><br>'
+  | strip_newlines
+-%}
+<label for="{{ tufte_note_id }}" class="margin-toggle sidenote-number"></label><input type="checkbox" id="{{ tufte_note_id }}" class="margin-toggle"
+><span class="sidenote">{{ tufte_note_body }}</span>

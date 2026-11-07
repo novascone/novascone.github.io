@@ -1,0 +1,1108 @@
+/*******************************************************************************
+ * Tufte design layer for al-folio
+ *
+ * Adapted from Tufte CSS (https://github.com/edwardtufte/tufte-css, MIT) and
+ * set in ET Book (https://github.com/edwardtufte/et-book, MIT), self-hosted in
+ * assets/fonts/. Loaded last from assets/css/main.scss so it overrides the
+ * al_folio_core gem styles without editing any gem-owned layout.
+ *
+ * Sizes are expressed against a 16px root (al-folio's Tailwind utilities rely
+ * on it), so Tufte's 15px-root values are converted rather than copied.
+ ******************************************************************************/
+
+// Paper color. Set `tufte.paper` in _config.yml: "#fffff8" (default) or "#ffffff".
+$paper: #fffff8 !default;
+$ink: #111111 !default;
+$ink-light: #555555 !default; // secondary text: captions, metadata, footer
+$rule: rgba(17, 17, 17, 0.18) !default; // hairlines and dividers
+
+$serif: et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
+$mono: "IBM Plex Mono", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+
+$text-column: 55%; // Tufte main column
+$mobile: 760px; // below this, sidenotes collapse inline
+
+/* -----------------------------------------------------------------------------
+ * Fonts (self-hosted)
+ * -------------------------------------------------------------------------- */
+
+@font-face {
+  font-family: "et-book";
+  src: url("../fonts/et-book/et-book-roman-line-figures.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "et-book";
+  src: url("../fonts/et-book/et-book-display-italic-old-style-figures.woff") format("woff");
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "et-book";
+  src: url("../fonts/et-book/et-book-bold-line-figures.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "et-book-roman-old-style";
+  src: url("../fonts/et-book/et-book-roman-old-style-figures.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../fonts/ibm-plex-mono/IBMPlexMono-Regular-Latin1.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../fonts/ibm-plex-mono/IBMPlexMono-Italic-Latin1.woff2") format("woff2");
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* -----------------------------------------------------------------------------
+ * Palette: collapse every al-folio color token to ink on paper.
+ * Dark mode is disabled (enable_darkmode: false); the dark selector is pinned to
+ * the same values so nothing colored can appear if it is ever switched on.
+ * -------------------------------------------------------------------------- */
+
+:root,
+html[data-theme="dark"] {
+  color-scheme: light;
+  --global-bg-color: #{$paper};
+  --global-code-bg-color: rgba(17, 17, 17, 0.04);
+  --global-text-color: #{$ink};
+  --global-text-color-light: #{$ink-light};
+  --global-theme-color: #{$ink};
+  --global-hover-color: #{$ink};
+  --global-hover-text-color: #{$paper};
+  --global-footer-bg-color: #{$paper};
+  --global-footer-text-color: #{$ink-light};
+  --global-footer-link-color: #{$ink};
+  --global-distill-app-color: #{$ink-light};
+  --global-divider-color: #{$rule};
+  --global-card-bg-color: transparent;
+  --global-highlight-color: #{$ink};
+  --global-back-to-top-bg-color: transparent;
+  --global-back-to-top-text-color: #{$ink};
+  --global-newsletter-bg-color: #{$paper};
+  --global-newsletter-text-color: #{$ink};
+
+  --global-tip-block: #{$ink};
+  --global-tip-block-bg: transparent;
+  --global-tip-block-text: #{$ink};
+  --global-tip-block-title: #{$ink};
+  --global-warning-block: #{$ink};
+  --global-warning-block-bg: transparent;
+  --global-warning-block-text: #{$ink};
+  --global-warning-block-title: #{$ink};
+  --global-danger-block: #{$ink};
+  --global-danger-block-bg: transparent;
+  --global-danger-block-text: #{$ink};
+  --global-danger-block-title: #{$ink};
+}
+
+/* -----------------------------------------------------------------------------
+ * Base typography
+ * -------------------------------------------------------------------------- */
+
+html,
+body {
+  background-color: $paper;
+}
+
+body {
+  color: $ink;
+  font-family: $serif;
+  font-size: 1.3125rem; // 21px, Tufte body size
+  line-height: 1.875rem; // 30px
+  counter-reset: sidenote-counter;
+  font-kerning: normal;
+  text-rendering: optimizeLegibility;
+}
+
+// Tailwind/Bootstrap utilities set their own families on some elements.
+body,
+button,
+input,
+select,
+textarea,
+.navbar,
+.btn,
+.badge,
+.tooltip,
+.popover {
+  font-family: $serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $serif;
+  font-weight: 400;
+  color: $ink;
+}
+
+h1 {
+  font-size: 3rem;
+  line-height: 1;
+  margin-top: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  font-style: italic;
+  font-size: 2.0625rem;
+  line-height: 1;
+  margin-top: 2.25rem;
+  margin-bottom: 1.4rem;
+}
+
+h3 {
+  font-style: italic;
+  font-size: 1.6rem;
+  line-height: 1;
+  margin-top: 2rem;
+  margin-bottom: 1.25rem;
+}
+
+h4,
+h5,
+h6 {
+  font-style: italic;
+  font-size: 1.3125rem;
+  line-height: 1.875rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+b,
+strong,
+.font-weight-bold,
+.font-weight-bolder,
+.font-bold {
+  font-weight: 700;
+}
+
+p {
+  margin-top: 1.4rem;
+  margin-bottom: 1.4rem;
+}
+
+sup,
+sub {
+  line-height: 0;
+}
+
+// Tufte "new thought" opener: <span class="newthought">In his later books</span>
+span.newthought {
+  font-variant: small-caps;
+  letter-spacing: 0.03em;
+  font-size: 1.2em;
+}
+
+.numeral {
+  font-family: et-book-roman-old-style;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid $rule;
+  margin: 1.5rem 0;
+}
+
+/* Links: same color as text, thin underline, no hover color. */
+a,
+a:link,
+a:visited,
+a:hover,
+a:focus,
+table.table a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 0.05em;
+  text-underline-offset: 0.12em;
+}
+
+a:hover {
+  text-decoration-thickness: 0.1em;
+}
+
+/* Code and small metadata use the monospace. */
+code,
+kbd,
+pre,
+samp,
+.mono {
+  font-family: $mono;
+}
+
+code {
+  font-size: 0.85em;
+  color: $ink;
+  background: none;
+  padding: 0;
+}
+
+pre {
+  font-size: 0.875rem;
+  line-height: 1.45;
+  background: var(--global-code-bg-color);
+  border: 0;
+  border-radius: 0;
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+}
+
+pre code {
+  font-size: inherit;
+}
+
+// Monochrome syntax highlighting: structure through weight and italics, not hue.
+.highlight,
+.highlight pre {
+  background: var(--global-code-bg-color) !important;
+}
+
+.highlight span {
+  color: $ink !important;
+  background: none !important;
+}
+
+.highlight {
+  .c,
+  .c1,
+  .cm,
+  .cp,
+  .cs,
+  .ch,
+  .cpf {
+    color: $ink-light !important;
+    font-style: italic;
+  }
+
+  .k,
+  .kd,
+  .kn,
+  .kr,
+  .kt,
+  .nf,
+  .nc {
+    font-weight: 600;
+  }
+}
+
+/* Tables: booktabs-style rules only. */
+table:not(.table-cv) {
+  border-collapse: collapse;
+
+  th {
+    font-weight: 400;
+    font-style: italic;
+  }
+
+  td,
+  th {
+    border-top: 0;
+    border-bottom: 1px solid $rule;
+  }
+
+  thead th {
+    border-bottom: 1px solid $ink;
+  }
+}
+
+/* Blockquotes: indented and plain; callout variants keep only an ink rule. */
+blockquote {
+  background: none;
+  border-left: 0;
+  margin: 1.5rem 0 1.5rem 2.5%;
+  padding: 0;
+  font-size: inherit;
+
+  p {
+    margin-bottom: 1rem;
+  }
+
+  footer {
+    font-size: 1.05rem;
+    text-align: right;
+  }
+
+  &.block-tip,
+  &.block-warning,
+  &.block-danger {
+    background: none;
+    border-left: 1px solid $ink;
+    padding-left: 1rem;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+ * Page geometry: Tufte's body box applied to al-folio's containers, with a
+ * 55% text column inside articles and the remainder left for the margin.
+ * -------------------------------------------------------------------------- */
+
+body > .container[role="main"],
+#navbar > .container,
+footer > .container {
+  width: 87.5%;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 12.5%;
+  padding-right: 0;
+}
+
+// Prose blocks: direct children of the article, or of the about page's wrapper.
+.post-header > .post-description,
+.post-header > .desc,
+.post article > p,
+.post article > blockquote,
+.post article > hr,
+.post article > table,
+.post article > .table-wrapper,
+.post article > pre,
+.post article > div.highlighter-rouge,
+.post article > figure:not(.fullwidth),
+.post article > .clearfix > p,
+.post article > .clearfix > blockquote,
+.post article > .clearfix > hr,
+.post article > .clearfix > pre,
+.post article > .clearfix > div.highlighter-rouge {
+  width: $text-column;
+}
+
+// 50% + 5% indent == 55%, as in Tufte CSS.
+.post article > ul,
+.post article > ol,
+.post article > dl,
+.post article > .clearfix > ul,
+.post article > .clearfix > ol,
+.post article > .clearfix > dl {
+  width: $text-column; // border-box: 5% indent + 50% text
+  padding-left: 5%;
+}
+
+li:not(:first-child) {
+  margin-top: 0.25rem;
+}
+
+// Opt-out for wide material: <div class="fullwidth">…</div> or {: .fullwidth}
+.post article .fullwidth {
+  width: 100%;
+  max-width: 90%;
+  clear: both;
+}
+
+figure {
+  margin: 0 0 2.5rem 0;
+}
+
+figcaption,
+.caption {
+  font-size: 1.05rem;
+  line-height: 1.45;
+  color: $ink-light;
+  text-align: left;
+}
+
+/* Page header */
+.post-header {
+  margin-bottom: 1.5rem;
+}
+
+.post-title {
+  font-size: 3rem;
+  font-weight: 400;
+  line-height: 1;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+
+  // The about page bolds the first name; Tufte headings are never bold.
+  .font-weight-bold,
+  b,
+  strong {
+    font-weight: 400;
+  }
+}
+
+.post-description,
+.post-header .desc,
+p.subtitle {
+  font-style: italic;
+  font-size: 1.6rem;
+  line-height: 1.3;
+  color: $ink;
+  margin-top: 0.5rem;
+}
+
+/* About page: profile block sits in the right margin like a margin figure. */
+.profile {
+  width: 28%;
+  margin-left: 2.5%;
+  margin-bottom: 1.5rem;
+
+  .more-info {
+    font-family: $serif;
+    font-size: 1.05rem;
+    line-height: 1.45;
+    color: $ink-light;
+    margin-top: 0.5rem;
+
+    p {
+      display: block;
+      margin: 0;
+    }
+  }
+}
+
+/* -----------------------------------------------------------------------------
+ * Navigation and footer
+ * -------------------------------------------------------------------------- */
+
+#navbar,
+#navbar.navbar {
+  background-color: $paper !important;
+  border-bottom: 1px solid $rule;
+  box-shadow: none !important;
+  opacity: 1;
+}
+
+#navbar .navbar-brand {
+  font-family: $serif;
+  font-variant: small-caps;
+  letter-spacing: 0.06em;
+  font-size: 1.3rem;
+  font-weight: 400;
+  text-decoration: none;
+  color: $ink;
+
+  .font-weight-bold,
+  span {
+    font-weight: 400;
+  }
+}
+
+#navbar .nav-link,
+#navbar .dropdown-item {
+  font-family: $serif;
+  font-variant: small-caps;
+  text-transform: lowercase; // make small caps apply to the whole label
+  letter-spacing: 0.06em;
+  font-size: 1.15rem;
+  color: $ink !important;
+  text-decoration: none;
+  background: none !important;
+}
+
+#navbar .nav-item.active > .nav-link,
+#navbar .nav-link:hover,
+#navbar .dropdown-item:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 0.05em;
+  text-underline-offset: 0.2em;
+  font-weight: 400;
+}
+
+#navbar .dropdown-menu {
+  background-color: $paper;
+  border: 1px solid $rule;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+#navbar .navbar-toggler .icon-bar {
+  background-color: $ink;
+}
+
+footer,
+footer.fixed-bottom,
+footer.sticky-bottom {
+  background-color: $paper !important;
+  color: $ink-light;
+  border-top: 1px solid $rule;
+  font-size: 0.95rem;
+  line-height: 1.5;
+
+  .container,
+  a {
+    color: $ink-light !important;
+  }
+}
+
+#back-to-top {
+  border: 1px solid $rule;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* -----------------------------------------------------------------------------
+ * Strip visual noise: shadows, rounded corners, colored badges and buttons.
+ * -------------------------------------------------------------------------- */
+
+.z-depth-1,
+.z-depth-2,
+.z-depth-3,
+.z-depth-4,
+.z-depth-5,
+.hoverable,
+.hoverable:hover,
+.card,
+.btn,
+.btn:hover,
+.shadow,
+.shadow-sm,
+.shadow-lg {
+  box-shadow: none !important;
+}
+
+.hoverable,
+.hoverable:hover {
+  transform: none !important;
+  transition: none !important;
+}
+
+.rounded,
+.card,
+.card-img,
+.card-img-top,
+.btn,
+.badge,
+.dropdown-menu,
+.form-control,
+.alert,
+img.rounded {
+  border-radius: 0 !important;
+}
+
+.badge,
+.badge.bg-primary,
+.badge.bg-secondary {
+  background: none !important;
+  color: $ink !important;
+  border: 0;
+  padding: 0;
+  font-family: $mono;
+  font-weight: 400;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.btn,
+.btn-sm {
+  background: none !important;
+  border: 0 !important;
+  color: $ink !important;
+  padding: 0;
+}
+
+.card {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+// Icons inherit ink instead of brand colors.
+.fa-solid,
+.fa-regular,
+.fa-brands,
+.ai,
+i[class^="fa-"],
+i[class*=" fa-"] {
+  color: inherit;
+}
+
+input.form-control,
+input[type="search"],
+input[type="text"],
+#bibsearch {
+  border-radius: 0 !important;
+  border: 0 !important;
+  border-bottom: 1px solid $rule !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* -----------------------------------------------------------------------------
+ * Publications: a typeset bibliography.
+ * -------------------------------------------------------------------------- */
+
+.publications {
+  width: $text-column;
+
+  h2.bibliography,
+  h2.year {
+    font-style: italic;
+    font-weight: 400;
+    color: $ink;
+    border: 0;
+    text-align: left;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  ol.bibliography {
+    padding-left: 0;
+
+    li {
+      margin-bottom: 1.5rem;
+      line-height: 1.45;
+      font-size: 1.15rem;
+
+      .abbr {
+        .badge,
+        abbr.badge {
+          width: auto !important;
+          text-align: left;
+          text-decoration: none;
+          font-variant: small-caps;
+          font-family: $serif;
+          font-size: 1rem;
+          letter-spacing: 0.05em;
+        }
+
+        .award {
+          color: $ink !important;
+          border-color: $ink !important;
+        }
+      }
+
+      .preview {
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      .title {
+        font-weight: 400;
+        font-size: 1.15rem;
+        color: $ink;
+        margin-bottom: 0.15rem;
+      }
+
+      .author {
+        color: $ink;
+
+        a {
+          color: inherit;
+          border: 0;
+        }
+
+        // al-folio marks the site owner's name with <em>; keep it legible, not loud.
+        > em {
+          font-style: normal;
+          text-decoration: underline;
+          text-decoration-thickness: 0.05em;
+          text-underline-offset: 0.15em;
+          border: 0;
+        }
+      }
+
+      .periodical {
+        color: $ink;
+
+        em {
+          font-style: italic;
+        }
+      }
+
+      .links {
+        margin-top: 0.35rem;
+
+        a.btn {
+          font-family: $mono;
+          font-size: 0.75rem;
+          text-transform: lowercase;
+          letter-spacing: 0.02em;
+          color: $ink-light !important;
+          border: 0 !important;
+          padding: 0;
+          margin: 0 0.9rem 0 0;
+          text-decoration: underline;
+          text-decoration-thickness: 0.05em;
+
+          &:hover {
+            color: $ink !important;
+            background: none !important;
+          }
+        }
+      }
+
+      .hidden {
+        font-size: 1.05rem;
+        line-height: 1.5;
+
+        &.open {
+          border: 0;
+          border-left: 1px solid $rule;
+          background: none;
+          padding-left: 1rem;
+          margin-top: 0.5rem;
+        }
+
+        pre {
+          font-size: 0.75rem;
+          border: 0;
+          background: var(--global-code-bg-color);
+        }
+      }
+    }
+  }
+}
+
+/* -----------------------------------------------------------------------------
+ * Projects: a list with the thumbnail in the margin, not a card grid.
+ * -------------------------------------------------------------------------- */
+
+.projects {
+  h2.category {
+    font-style: italic;
+    font-weight: 400;
+    color: $ink;
+    text-align: left;
+    border: 0;
+    margin-top: 2rem;
+  }
+
+  a:has(> h2.category) {
+    text-decoration: none;
+  }
+
+  // Collapse the 1/2/3-column grids into a single list.
+  .row {
+    display: block;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .row > .col,
+  .row > .col.mb-4 {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    margin-bottom: 2rem;
+  }
+
+  > .container {
+    width: 100%;
+    max-width: none;
+    padding: 0;
+  }
+
+  .col > a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .card {
+    display: grid;
+    grid-template-columns: $text-column 1fr;
+    column-gap: 5%;
+    align-items: start;
+    height: auto !important;
+
+    > figure,
+    > .row {
+      grid-column: 2;
+      grid-row: 1;
+      max-width: 14rem;
+      margin: 0.35rem 0 0 0;
+    }
+
+    > .card-body,
+    .card-body {
+      grid-column: 1;
+      grid-row: 1;
+      padding: 0;
+    }
+
+    .card-img-top,
+    .card-img {
+      border-radius: 0;
+    }
+  }
+
+  // Horizontal variant: flatten its inner two-column row.
+  .card > .row.no-gutters {
+    display: contents;
+
+    > div {
+      width: auto;
+      max-width: none;
+      padding: 0;
+    }
+  }
+
+  .card-title {
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 1.15;
+    margin: 0 0 0.4rem 0;
+    color: $ink;
+  }
+
+  .col > a:hover .card-title {
+    text-decoration: underline;
+    text-decoration-thickness: 0.05em;
+    text-underline-offset: 0.15em;
+  }
+
+  .card-text {
+    font-size: 1.15rem;
+    line-height: 1.45;
+    color: $ink;
+    margin: 0;
+  }
+
+  .github-icon,
+  .stars {
+    font-family: $mono;
+    font-size: 0.75rem;
+    color: $ink-light;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+ * CV (al_folio_cv): its accents read --global-theme-color, already ink; this
+ * flattens the remaining badges and buttons.
+ * -------------------------------------------------------------------------- */
+
+.cv .card .list-group-item .badge {
+  background: none !important;
+  color: $ink !important;
+  font-family: $mono;
+  font-weight: 400 !important;
+  font-size: 0.8rem;
+  text-transform: none !important;
+  letter-spacing: 0.02em;
+}
+
+span.badge-toc {
+  background: none !important;
+  color: $ink !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  font-family: $mono;
+  font-weight: 400 !important;
+  font-size: 0.8rem;
+}
+
+a.btncv {
+  border-radius: 0 !important;
+  font-family: $mono;
+  text-transform: lowercase !important;
+
+  &:hover {
+    color: $ink !important;
+    border-color: $ink !important;
+    text-decoration: underline !important;
+  }
+}
+
+td.list-group-category {
+  font-style: italic;
+}
+
+p.location,
+td.list-group-school,
+p.list-group-time {
+  font-family: $mono;
+}
+
+/* -----------------------------------------------------------------------------
+ * Sidenotes and margin notes (markup from _includes/sidenote.liquid and
+ * _includes/marginnote.liquid). Geometry matches Tufte CSS: the note floats
+ * out of the 55% paragraph into the right margin.
+ * -------------------------------------------------------------------------- */
+
+.sidenote,
+.marginnote {
+  float: right;
+  clear: right;
+  margin-right: -60%;
+  width: 50%;
+  margin-top: 0.3rem;
+  margin-bottom: 0;
+  font-size: 1.05rem;
+  line-height: 1.3;
+  vertical-align: baseline;
+  position: relative;
+  color: $ink;
+
+  code {
+    font-size: 0.8rem;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+.sidenote-number {
+  counter-increment: sidenote-counter;
+}
+
+.sidenote-number::after,
+.sidenote::before {
+  font-family: et-book-roman-old-style, $serif;
+  position: relative;
+  vertical-align: baseline;
+}
+
+.sidenote-number::after {
+  content: counter(sidenote-counter);
+  font-size: 0.95rem;
+  top: -0.5rem;
+  left: 0.1rem;
+}
+
+.sidenote::before {
+  content: counter(sidenote-counter) " ";
+  font-size: 0.95rem;
+  top: -0.5rem;
+}
+
+blockquote .sidenote,
+blockquote .marginnote {
+  margin-right: -82%;
+  min-width: 59%;
+  text-align: left;
+}
+
+// Notes inside list items: the list is 50% wide, so reach a little further.
+li .sidenote,
+li .marginnote {
+  margin-right: -66%;
+  width: 55%;
+}
+
+input.margin-toggle {
+  display: none;
+}
+
+label.sidenote-number {
+  display: inline;
+}
+
+label.margin-toggle:not(.sidenote-number) {
+  display: none;
+}
+
+/* -----------------------------------------------------------------------------
+ * Small screens: single column, notes collapse inline behind a toggle.
+ * -------------------------------------------------------------------------- */
+
+@media (max-width: $mobile) {
+  body > .container[role="main"],
+  #navbar > .container,
+  footer > .container {
+    width: 84%;
+    padding-left: 8%;
+    padding-right: 8%;
+    box-sizing: content-box;
+  }
+
+  #navbar > .container {
+    width: auto;
+    padding-left: 4%;
+    padding-right: 4%;
+  }
+
+  .post-header > .post-description,
+  .post-header > .desc,
+  .post article > p,
+  .post article > blockquote,
+  .post article > hr,
+  .post article > table,
+  .post article > .table-wrapper,
+  .post article > pre,
+  .post article > div.highlighter-rouge,
+  .post article > figure:not(.fullwidth),
+  .post article > .clearfix > p,
+  .post article > .clearfix > blockquote,
+  .post article > .clearfix > hr,
+  .post article > .clearfix > pre,
+  .post article > .clearfix > div.highlighter-rouge,
+  .publications {
+    width: 100%;
+  }
+
+  .post article > ul,
+  .post article > ol,
+  .post article > dl,
+  .post article > .clearfix > ul,
+  .post article > .clearfix > ol,
+  .post article > .clearfix > dl {
+    width: 90%;
+  }
+
+  .post article .fullwidth {
+    max-width: 100%;
+  }
+
+  h1,
+  .post-title {
+    font-size: 2.4rem;
+  }
+
+  .profile {
+    float: none !important;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .projects .card {
+    grid-template-columns: 1fr;
+
+    > figure,
+    > .row {
+      grid-column: 1;
+      grid-row: 2;
+      margin-top: 0.75rem;
+    }
+  }
+
+  label.margin-toggle:not(.sidenote-number) {
+    display: inline;
+  }
+
+  .sidenote,
+  .marginnote {
+    display: none;
+  }
+
+  .margin-toggle:checked + .sidenote,
+  .margin-toggle:checked + .marginnote {
+    display: block;
+    float: left;
+    left: 1rem;
+    clear: both;
+    width: 95%;
+    margin: 1rem 2.5%;
+    vertical-align: baseline;
+    position: relative;
+  }
+
+  label {
+    cursor: pointer;
+  }
+}

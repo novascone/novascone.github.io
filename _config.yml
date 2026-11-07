@@ -105,6 +105,10 @@ bib_search: true
 # Dimensions
 max_width: 930px
 
+# Tufte design layer (_sass/_tufte.scss)
+tufte:
+  paper: "#fffff8" # page background: "#fffff8" (Tufte off-white) or "#ffffff" (white)
+
 # -----------------------------------------------------------------------------
 # Open Graph & Schema.org
 # -----------------------------------------------------------------------------

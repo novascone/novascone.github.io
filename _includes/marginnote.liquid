@@ -1,0 +1,27 @@
+{%- comment -%}
+  Tufte-style unnumbered margin note. Use inline, inside a paragraph:
+
+    Some sentence.{% include marginnote.liquid text="An aside without a number." %} More text.
+
+  For a margin figure, put an image in the text:
+
+    {% include marginnote.liquid text="![Alt text](/assets/img/example.jpg) Caption for the figure." %}
+
+  Parameters:
+    text  (required) note body; Markdown is rendered inline.
+    id    (optional) unique id for the mobile toggle; auto-numbered per page if omitted.
+
+  On narrow screens the note collapses behind a ⊕ toggle.
+{%- endcomment -%}
+{%- assign tufte_note_count = tufte_note_count | plus: 1 -%}
+{%- capture tufte_note_id -%}{{ include.id | default: 'mn' }}-{{ tufte_note_count }}{%- endcapture -%}
+{%- assign tufte_note_body = include.text
+  | markdownify
+  | strip
+  | remove_first: '<p>'
+  | replace: '</p>', ''
+  | replace: '<p>', '<br><br>'
+  | strip_newlines
+-%}
+<label for="{{ tufte_note_id }}" class="margin-toggle">&#8853;</label><input type="checkbox" id="{{ tufte_note_id }}" class="margin-toggle"
+><span class="marginnote">{{ tufte_note_body }}</span>
