@@ -10,6 +10,8 @@
  * on it), so Tufte's 15px-root values are converted rather than copied.
  ******************************************************************************/
 
+@use "sass:color";
+
 // Paper color. Set `tufte.paper` in _config.yml: "#fffff8" (default) or "#ffffff".
 $paper: #fffff8 !default;
 $ink: #111111 !default;
@@ -401,7 +403,8 @@ footer > .container {
   padding-left: 5%;
 }
 
-li:not(:first-child) {
+// Scoped to content: the navbar is a list too, and must not pick this up.
+.post article li:not(:first-child) {
   margin-top: 0.25rem;
 }
 
@@ -1005,6 +1008,142 @@ label.sidenote-number {
 
 label.margin-toggle:not(.sidenote-number) {
   display: none;
+}
+
+/* -----------------------------------------------------------------------------
+ * Book tabs (wide screens only)
+ *
+ * The nav becomes a set of thumb-index tabs growing out of a hairline "fore-edge"
+ * down the right side of the window, like stepped page edges in a book: each
+ * later section's tab is lower and reaches a little further right. The open
+ * page's tab is paper-colored and breaks the edge line, so it reads as part of
+ * the page. Sections before the current one sit mirrored on the left edge, as
+ * turned pages. Pure CSS on the gem's existing nav markup; no layout override.
+ * -------------------------------------------------------------------------- */
+
+$tabs-breakpoint: 1000px !default; // below this, the regular navbar is used
+$tab-width: 2rem; // shortest tab (the first section)
+$tab-step: 0.6rem; // how much further each later tab reaches
+$tab-edge: 6.25rem; // distance of the fore-edge line from the window edge
+$tab-top: 5.5rem; // first tab sits just under the header
+$tab-tint: color.mix($ink, $paper, 4%); // pages beneath the open one
+
+@media (min-width: $tabs-breakpoint) {
+  // Keep page content clear of the tab strip on both sides.
+  body > .container[role="main"],
+  footer > .container {
+    padding-right: calc(#{$tab-edge} + 1.5rem);
+  }
+
+  // Tabs share the window height: one share per section (5 by default, up to 8).
+  #navbar .navbar-nav {
+    --tab-n: 5;
+    --tab-h: min(7.5rem, calc((100vh - #{$tab-top} - 4rem) / var(--tab-n)));
+  }
+
+  @for $n from 6 through 8 {
+    #navbar .navbar-nav:has(> .nav-item:nth-child(#{$n})) {
+      --tab-n: #{$n};
+    }
+  }
+
+  #navbar .navbar-nav {
+    // Right fore-edge: the edge of the unturned pages.
+    &::before {
+      content: "";
+      position: fixed;
+      top: $tab-top;
+      bottom: 3.5rem;
+      left: calc(100% - #{$tab-edge});
+      border-left: 1px solid $rule;
+      pointer-events: none;
+    }
+
+    // Left fore-edge, only once some pages have been turned.
+    &:has(> .nav-item:first-child ~ .nav-item.active)::after {
+      content: "";
+      position: fixed;
+      top: $tab-top;
+      bottom: 3.5rem;
+      right: calc(100% - #{$tab-edge});
+      border-right: 1px solid $rule;
+      pointer-events: none;
+    }
+  }
+
+  @for $i from 1 through 8 {
+    #navbar .navbar-nav > .nav-item:nth-child(#{$i}) {
+      --i: #{$i - 1};
+    }
+  }
+
+  #navbar .navbar-nav > .nav-item {
+    position: fixed;
+    margin: 0;
+    padding: 0;
+    top: calc(#{$tab-top} + var(--i) * var(--tab-h));
+    height: var(--tab-h);
+    // Unturned pages hang off the right edge, attached to the fore-edge line.
+    left: calc(100% - #{$tab-edge});
+    width: calc(#{$tab-width} + var(--i) * #{$tab-step});
+
+    > .nav-link {
+      writing-mode: vertical-rl;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      padding: 0 !important;
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      line-height: 1;
+      color: $ink-light !important;
+      background: $tab-tint !important;
+      border: 1px solid $rule;
+      border-left: 0;
+      text-decoration: none !important;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    > .nav-link:hover {
+      color: $ink !important;
+    }
+  }
+
+  // The open page: paper-colored, ink label, and it covers the edge line so the
+  // tab and the page read as one sheet.
+  #navbar .navbar-nav > .nav-item.active {
+    left: calc(100% - #{$tab-edge} - 1px);
+    width: calc(#{$tab-width} + var(--i) * #{$tab-step} + 1px);
+    z-index: 1;
+
+    > .nav-link {
+      color: $ink !important;
+      background: $paper !important;
+      border-color: $ink;
+      border-left: 0;
+      text-decoration: none !important;
+    }
+  }
+
+  // Turned pages: everything before the open one, mirrored onto the left edge.
+  #navbar .navbar-nav > .nav-item:has(~ .nav-item.active) {
+    left: auto;
+    right: calc(100% - #{$tab-edge});
+
+    > .nav-link {
+      border: 1px solid $rule;
+      border-right: 0;
+    }
+  }
+
+  // The horizontal list is now empty space in the header; keep the brand only.
+  #navbar .navbar-collapse-main {
+    flex-grow: 0;
+  }
 }
 
 /* -----------------------------------------------------------------------------
