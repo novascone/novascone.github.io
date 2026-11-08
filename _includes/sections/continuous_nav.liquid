@@ -1,0 +1,104 @@
+{% comment %}
+  Continuous home page navigation. Points the contents (nav) links at the
+  sections on this page instead of separate pages, and marks the section being
+  read as you scroll (the nav item gets the `active` class, which the contents
+  styling in _sass/_tufte.scss underlines with a rule). Clicking jumps without
+  animation; the address bar follows along (/#cv etc.) so a refresh keeps your
+  place.
+
+  A section is any element with class `book-section` and an id matching the
+  last part of its page's permalink (/publications/ -> id="publications").
+{% endcomment %}
+<script>
+  (function () {
+    var base = "{{ '/' | relative_url }}";
+    var navItems = [];
+    var current = null;
+    // The section you chose stays marked until you scroll yourself, even if it
+    // is too short to reach the top of the window.
+    var pinned = null;
+    // Leave the address alone until the browser has jumped to any #section in it.
+    var ready = false;
+    // A section is current once its top is just under the header.
+    var probe = 120;
+
+    document.querySelectorAll('#navbar .navbar-nav > .nav-item > .nav-link').forEach(function (link) {
+      var path = new URL(link.href, window.location.href).pathname;
+      var id = path === base ? 'about' : path.slice(base.length).replace(/\/+$/, '').split('/').pop();
+      var target = id === 'about' ? document.querySelector('.post') : document.getElementById(id);
+      if (!target) return;
+      link.setAttribute('href', '#' + id);
+      navItems.push({ id: id, item: link.parentElement, target: target });
+
+      link.addEventListener('click', function (event) {
+        pinned = id;
+        if (id === 'about') {
+          event.preventDefault();
+          window.scrollTo(0, 0);
+          history.replaceState(null, '', base);
+        }
+        // Close the collapsed menu on small screens after choosing a section.
+        var toggler = document.querySelector('.navbar-toggler-main[aria-expanded="true"]');
+        if (toggler) toggler.click();
+        window.setTimeout(update, 0);
+      });
+    });
+
+    if (!navItems.length) return;
+
+    function update() {
+      var active = navItems[0];
+      navItems.forEach(function (entry) {
+        if (entry.id !== 'about' && entry.target.getBoundingClientRect().top <= probe) active = entry;
+      });
+      // At the very bottom, the last section is the one being read even if short.
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+        active = navItems[navItems.length - 1];
+      }
+      if (pinned) {
+        navItems.forEach(function (entry) {
+          if (entry.id === pinned) active = entry;
+        });
+      }
+      if (active === current) return;
+      current = active;
+      navItems.forEach(function (entry) {
+        entry.item.classList.toggle('active', entry === active);
+      });
+      if (ready) history.replaceState(null, '', active.id === 'about' ? base : '#' + active.id);
+    }
+
+    var queued = false;
+    window.addEventListener(
+      'scroll',
+      function () {
+        if (queued) return;
+        queued = true;
+        window.requestAnimationFrame(function () {
+          queued = false;
+          update();
+        });
+      },
+      { passive: true }
+    );
+    // Scrolling by hand releases a clicked section.
+    ['wheel', 'touchmove', 'keydown'].forEach(function (type) {
+      window.addEventListener(
+        type,
+        function () {
+          pinned = null;
+        },
+        { passive: true }
+      );
+    });
+    window.addEventListener('resize', update);
+    window.addEventListener('load', function () {
+      window.setTimeout(function () {
+        ready = true;
+        current = null;
+        update();
+      }, 0);
+    });
+    update();
+  })();
+</script>

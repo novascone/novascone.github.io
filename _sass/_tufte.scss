@@ -490,6 +490,25 @@ p.subtitle {
   }
 }
 
+/* Continuous home page: each section follows the last, like chapters. Sections
+ * start below the about-page photo, and jumping to one leaves room for the
+ * fixed header. */
+.book-section {
+  clear: both;
+  padding-top: 4rem;
+  scroll-margin-top: 3rem;
+
+  > .post-title {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+  }
+
+  > hr,
+  > ul {
+    width: $text-column;
+  }
+}
+
 /* -----------------------------------------------------------------------------
  * Navigation and footer
  * -------------------------------------------------------------------------- */
@@ -894,6 +913,14 @@ input[type="text"],
     font-size: 0.75rem;
     color: $ink-light;
   }
+}
+
+// Repositories page: the GitHub cards are third-party images in GitHub's
+// colors. Render them in grayscale, and multiply-blend so their white card
+// background takes on the paper color.
+.repositories .repo img {
+  filter: grayscale(1) contrast(1.05);
+  mix-blend-mode: multiply;
 }
 
 // Repositories page: organization login set as small metadata.

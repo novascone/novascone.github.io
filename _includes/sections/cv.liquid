@@ -1,0 +1,8 @@
+{% comment %}
+  CV section: shared by the home page and /cv/. Renders the al_folio_cv plugin's
+  CV (data: _data/cv.yml) and keeps only the CV body, dropping the plugin's own
+  page header so the CV can sit inside another page.
+{% endcomment %}
+{% capture cv_full %}{% al_folio_cv_render %}{% endcapture %}
+{% assign cv_body = cv_full | split: '<article>' | last | split: '</article>' | first %}
+{{ cv_body }}

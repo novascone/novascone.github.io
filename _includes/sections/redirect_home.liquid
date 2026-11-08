@@ -1,0 +1,9 @@
+{% comment %}
+  The site reads as one continuous page. Standalone section pages forward to
+  their section on the home page; their content still renders for anyone
+  without JavaScript.
+  Usage: {% include sections/redirect_home.liquid anchor="publications" %}
+{% endcomment %}
+<script>
+  window.location.replace("{{ '/' | relative_url }}#{{ include.anchor }}");
+</script>

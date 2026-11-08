@@ -6,14 +6,6 @@ nav: true
 nav_order: 2
 ---
 
-<!-- _pages/publications.md -->
+{% include sections/redirect_home.liquid anchor="publications" %}
 
-<!-- Bibsearch Feature -->
-
-{% include bib_search.liquid %}
-
-<div class="publications">
-
-{% bibliography %}
-
-</div>
+{% include sections/publications.liquid %}
