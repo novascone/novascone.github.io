@@ -490,6 +490,11 @@ p.subtitle {
   }
 }
 
+/* About page: extra space above the "Currently" list. */
+.post article h2#currently {
+  margin-top: 4.5rem;
+}
+
 /* Continuous home page: each section follows the last, like chapters. Sections
  * start below the about-page photo, and jumping to one leaves room for the
  * fixed header. */
