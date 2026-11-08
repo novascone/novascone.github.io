@@ -504,6 +504,15 @@ p.subtitle {
   height: calc(100svh - 6.5rem);
 }
 
+.cv .card > .card-title {
+  scroll-margin-top: 4rem;
+}
+
+// The CV sub-contents only appear in the wide-screen margin contents.
+.contents-sub {
+  display: none;
+}
+
 .book-section {
   clear: both;
   padding-top: 4rem;
@@ -1172,6 +1181,44 @@ $text-left: calc(50% - #{$article-width} * 0.275);
       margin-left: 0.5rem;
       border-top: 1px solid $ink;
     }
+  }
+
+  // CV sub-contents (built by _includes/sections/continuous_nav.liquid): the
+  // CV's parts, indented under "v cv", shown only while the CV is being read.
+  #navbar .navbar-nav {
+    max-height: calc(100vh - #{$contents-top} - 2rem);
+    overflow-y: auto;
+  }
+
+  #navbar .navbar-nav .contents-sub {
+    display: none;
+    text-align: left;
+    list-style: none;
+    margin: 0.3rem 0 0.4rem 2rem;
+    padding: 0;
+  }
+
+  #navbar .navbar-nav > .nav-item.active > .contents-sub {
+    display: block;
+  }
+
+  #navbar .contents-sub a {
+    display: block;
+    padding: 0.1rem 0;
+    font-size: 0.9rem;
+    line-height: 1.35;
+    color: $ink-light;
+    text-decoration: none;
+
+    &:hover {
+      color: $ink;
+      text-decoration: underline;
+    }
+  }
+
+  #navbar .contents-sub .current > a {
+    color: $ink;
+    font-style: italic;
   }
 
   // Running head: brand only, in small caps over a hairline.

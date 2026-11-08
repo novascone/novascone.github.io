@@ -46,18 +46,64 @@
 
     if (!navItems.length) return;
 
+    // CV sub-contents: list the CV's own parts (Contact Information, Experience,
+    // ...) under its contents entry. Shown while the CV is being read.
+    var subItems = [];
+    navItems.forEach(function (entry) {
+      if (entry.id !== 'cv') return;
+      var list = document.createElement('ul');
+      list.className = 'contents-sub';
+      entry.target.querySelectorAll('.cv .card > .card-title').forEach(function (heading) {
+        var name = heading.textContent.trim();
+        if (!heading.id)
+          heading.id =
+            'cv-' +
+            name
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-|-$/g, '');
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+        a.href = '#' + heading.id;
+        a.textContent = name;
+        a.addEventListener('click', function () {
+          pinned = 'cv';
+          window.setTimeout(update, 0);
+        });
+        li.appendChild(a);
+        list.appendChild(li);
+        subItems.push({ li: li, target: heading });
+      });
+      if (subItems.length) entry.item.appendChild(list);
+    });
+    var currentSub = null;
+
     function update() {
       var active = navItems[0];
       navItems.forEach(function (entry) {
         if (entry.id !== 'about' && entry.target.getBoundingClientRect().top <= probe) active = entry;
       });
       // At the very bottom, the last section is the one being read even if short.
-      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
-        active = navItems[navItems.length - 1];
-      }
+      var atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+      if (atBottom) active = navItems[navItems.length - 1];
       if (pinned) {
         navItems.forEach(function (entry) {
           if (entry.id === pinned) active = entry;
+        });
+      }
+      // Within the CV, mark the part being read.
+      var sub = null;
+      if (active.id === 'cv' && subItems.length) {
+        sub = subItems[0];
+        subItems.forEach(function (entry) {
+          if (entry.target.getBoundingClientRect().top <= probe) sub = entry;
+        });
+        if (atBottom) sub = subItems[subItems.length - 1];
+      }
+      if (sub !== currentSub) {
+        currentSub = sub;
+        subItems.forEach(function (entry) {
+          entry.li.classList.toggle('current', entry === sub);
         });
       }
       if (active === current) return;

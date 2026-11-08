@@ -19,16 +19,13 @@ cv:
   # Replace it with your own entries, add more, or delete sections you don't need.
   sections:
     Education:
-      - institution: University Name
-        location: City, State
-        url: https://example.com
-        area: Field of Study
-        studyType: Degree
-        start_date: 2020
-        end_date: 2024
-        courses: "Relevant coursework"
-        highlights:
-          - Highlight or achievement.
+      - institution: Utah State University
+        location: Logan, Utah
+        url: https://www.usu.edu/
+        area: Computer Science
+        studyType: Bachelor's
+        start_date: 2017
+        end_date: 2021
 
     Experience:
       - company: Organization Name

@@ -26,6 +26,12 @@ latest_posts:
 
 I am a physics student at Utah State University, interested in gravitation and scientific computing.
 
+## Currently
+
+- Computing black hole quasinormal modes with physics-informed neural networks
+- Building a three-dimensional rendered ensemble environment ([tree](https://github.com/novascone/tree))
+- Member of [Quantum and Gravitational Interactions](https://github.com/QGInt) (QGInt)
+
 <!-- The rest of the site continues below, one section after another. Section
      content lives in _includes/sections/; nav order matches nav_order. -->
 
