@@ -12,7 +12,7 @@ repo_description_lines_max: 2
 #   show=prs_merged,reviews add metrics: reviews, prs_merged, prs_merged_percentage,
 #                           discussions_started, discussions_answered
 #   include_all_commits=true  count all-time commits instead of the last year
-stats_card_options: "hide_rank=true&hide=stars,issues&include_all_commits=true"
+stats_card_options: "hide=stars,issues&include_all_commits=true"
 
 # Cards appear in this order. Organization repos work too, e.g. QGInt/<repo>.
 github_repos:

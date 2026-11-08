@@ -493,10 +493,24 @@ p.subtitle {
 /* Continuous home page: each section follows the last, like chapters. Sections
  * start below the about-page photo, and jumping to one leaves room for the
  * fixed header. */
+// Every part takes at least one full screen, like a page of a book.
+// About: an invisible spacer one screen tall at the top of the page; sections
+// clear it, so publications never starts on the first screen.
+.post:has(.book-section)::before {
+  content: "";
+  float: left;
+  width: 0;
+  height: calc(100vh - 6.5rem);
+  height: calc(100svh - 6.5rem);
+}
+
 .book-section {
   clear: both;
   padding-top: 4rem;
   scroll-margin-top: 3rem;
+  // Each section fills at least the screen it is jumped to.
+  min-height: calc(100vh - 3rem);
+  min-height: calc(100svh - 3rem);
 
   > .post-title {
     margin-top: 0;

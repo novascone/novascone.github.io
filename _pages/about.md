@@ -12,6 +12,7 @@ profile:
     <p>Department of Physics</p>
     <p>Logan, Utah</p>
     <p><a href="https://github.com/novascone">GitHub</a></p>
+    <p><a href="mailto:warren.novascone@usu.edu">warren.novascone@usu.edu</a></p>
 
 selected_papers: false
 social: false
@@ -23,7 +24,7 @@ latest_posts:
   enabled: false
 ---
 
-I am a physics student at Utah State University, interested in gravitational physics and numerical methods.
+I am a physics student at Utah State University, interested in gravitation and scientific computing.
 
 <!-- The rest of the site continues below, one section after another. Section
      content lives in _includes/sections/; nav order matches nav_order. -->
