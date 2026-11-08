@@ -896,6 +896,13 @@ input[type="text"],
   }
 }
 
+// Repositories page: organization login set as small metadata.
+.github-orgs .mono {
+  font-size: 0.75rem;
+  color: $ink-light;
+  letter-spacing: 0.02em;
+}
+
 /* -----------------------------------------------------------------------------
  * CV (al_folio_cv): its accents read --global-theme-color, already ink; this
  * flattens the remaining badges and buttons.
@@ -909,6 +916,12 @@ input[type="text"],
   font-size: 0.8rem;
   text-transform: none !important;
   letter-spacing: 0.02em;
+}
+
+// CV entries are list items; drop their bullet, which otherwise floats beside
+// the date range.
+.cv .list-group-item {
+  list-style: none;
 }
 
 span.badge-toc {

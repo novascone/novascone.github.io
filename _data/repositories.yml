@@ -1,10 +1,17 @@
 # GitHub accounts and repositories shown on the repositories page.
-# Uncomment and edit the lists below; leave them empty to show nothing.
 
+# Personal accounts only: the stats card service does not support organizations.
 github_users:
-#  - novascone
+  - novascone
 
 repo_description_lines_max: 2
 
+# Cards appear in this order. Organization repos work too, e.g. QGInt/<repo>.
 github_repos:
-#  - novascone/novascone.github.io
+  - novascone/dho-pinn
+  - novascone/tree
+
+# Organizations, listed as links (the stats card service cannot render them).
+github_orgs:
+  - login: QGInt
+    name: Quantum and Gravitational Interactions
