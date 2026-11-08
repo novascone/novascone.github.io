@@ -1,14 +1,10 @@
+# GitHub accounts and repositories shown on the repositories page.
+# Uncomment and edit the lists below; leave them empty to show nothing.
+
 github_users:
-  - torvalds
-  - alshedivat
+#  - novascone
 
 repo_description_lines_max: 2
 
 github_repos:
-  - alshedivat/al-folio
-  - jekyll/jekyll
-  - twbs/bootstrap
-  - jquery/jquery
-  - FortAwesome/Font-Awesome
-  - mathjax/MathJax
-  - jpswalsh/academicons
+#  - novascone/novascone.github.io
